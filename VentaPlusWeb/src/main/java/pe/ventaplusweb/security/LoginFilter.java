@@ -18,6 +18,9 @@ import jakarta.servlet.http.HttpServletResponse;
 			"/gestionClientes.jsp",
 			"/actualizarCliente.jsp",
 			"/nuevoCliente.jsp",
+			"/gestionCategorias.jsp",
+			"/nuevaCategoria.jsp",
+			"/actualizarCategoria.jsp",
 			"/HomeController",
 			"/CategoriaController",
 	}
