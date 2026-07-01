@@ -16,5 +16,5 @@ public interface ICategoriaBL {
 
 	List<Categoria> buscarCategoriaPorNombre(String nombre) throws Exception;
 
-	List<Categoria> listarCategoriasActivas() throws Exception;
+	List<Categoria> listarCategorias() throws Exception;
 }

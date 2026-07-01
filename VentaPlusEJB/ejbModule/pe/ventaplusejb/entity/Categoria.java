@@ -15,8 +15,8 @@ import jakarta.persistence.Table;
 @Table(name = "Categoria")
 @NamedQueries({
 	@NamedQuery(
-			name = "Categoria.listarActivas",
-			query = "SELECT c FROM Categoria c WHERE c.estado = 'A' ORDER BY c.nombre"
+			name = "Categoria.listarTodas",
+			query = "SELECT c FROM Categoria c ORDER BY c.nombre"
 			),
 	@NamedQuery(
 			name = "Categoria.buscarPorId",
@@ -34,7 +34,7 @@ import jakarta.persistence.Table;
 			),
 	@NamedNativeQuery(
 			name = "Categoria.updateCategoria",
-			query = "UPDATE categoria SET nombre = :nombre, descripcion = :descripcion WHERE id = :id"
+			query = "UPDATE categoria SET nombre = :nombre, descripcion = :descripcion, estado = :estado WHERE id = :id"
 			),
 	@NamedNativeQuery(
 			name = "Categoria.eliminarLogicoCategoria",
@@ -53,7 +53,7 @@ public class Categoria {
 	@Column(length = 200)
 	private String descripcion;
 
-	@Column(nullable = false, length = 1)
+	@Column(nullable = false, length = 1, columnDefinition = "CHAR(1)")
 	private String estado = "A";
 
 	public Integer getId() {

@@ -14,7 +14,7 @@ public class CategoriaDAO {
 
 	private static volatile EntityManagerFactory EMF;
 
-	private CategoriaDAO() {
+	public CategoriaDAO() {
 	}
 
 	private static EntityManagerFactory getEMF() {
@@ -28,9 +28,9 @@ public class CategoriaDAO {
 		return EMF;
 	}
 
-	public List<Categoria> listarActivas() {
+	public List<Categoria> listarTodas() {
 		try (EntityManager em = getEMF().createEntityManager()) {
-			TypedQuery<Categoria> query = em.createNamedQuery("Categoria.listarActivas", Categoria.class);
+			TypedQuery<Categoria> query = em.createNamedQuery("Categoria.listarTodas", Categoria.class);
 			return query.getResultList();
 		}
 	}
@@ -69,6 +69,7 @@ public class CategoriaDAO {
 			Query query = em.createNamedQuery("Categoria.updateCategoria");
 			query.setParameter("nombre", c.getNombre());
 			query.setParameter("descripcion", c.getDescripcion());
+			query.setParameter("estado", c.getEstado() != null ? c.getEstado() : "A");
 			query.setParameter("id", c.getId());
 			query.executeUpdate();
 			em.getTransaction().commit();

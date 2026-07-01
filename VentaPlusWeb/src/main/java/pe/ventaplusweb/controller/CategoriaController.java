@@ -1,4 +1,4 @@
-package pe.ventaplusweb.controller;
+﻿package pe.ventaplusweb.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -15,16 +15,7 @@ import pe.ventaplusejb.bl.CategoriaBL;
 import pe.ventaplusejb.bl.ICategoriaBL;
 import pe.ventaplusejb.entity.Categoria;
 
-/**
- * Servlet implementation class CategoriaController
- * 
- * Routes by ?opcion= (8 verbs per spec REQ-CAT-2.2):
- *   listar | nuevo | registrar | editar | actualizar | eliminar | buscar | obtener
- * 
- * Defensive session check at top of doGet/doPost (REQ-CAT-2.6) — defense in
- * depth alongside LoginFilter, because /CategoriaController is reachable
- * directly without going through a JSP URL pattern that the filter covers.
- */
+
 @WebServlet("/CategoriaController")
 public class CategoriaController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -34,23 +25,12 @@ public class CategoriaController extends HttpServlet {
 	private static final String JSP_ACTUALIZAR = "actualizarCategoria.jsp";
 	private static final String REDIRECT_LISTAR = "CategoriaController?opcion=listar";
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
+	
 	public CategoriaController() {
 		super();
 	}
 
-	/**
-	 * Returns true and redirects to index.jsp if no session or no user
-	 * attribute is present. Otherwise returns false.
-	 *
-	 * DEVIATION FROM BRIEF: brief said getAttribute("usuario"), but
-	 * SessionManager.iniciarSesion sets "usuarioSesion" (the USUARIO_SESION
-	 * constant). Using "usuario" would make the check always redirect and
-	 * render the CategoriaController unreachable. We use "usuarioSesion" to
-	 * match the existing codebase. Surface to user for review.
-	 */
+	
 	private boolean sesionInvalida(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession(false);
 		if (session == null || session.getAttribute("usuarioSesion") == null) {
@@ -60,16 +40,14 @@ public class CategoriaController extends HttpServlet {
 		return false;
 	}
 
-	private void forwardError(HttpServletRequest request, HttpServletResponse response, String jsp, String message) throws ServletException, IOException {
+	private void forwardError(HttpServletRequest request, HttpServletResponse response, String jsp, String message)
+			throws ServletException, IOException {
 		request.setAttribute("error", message);
 		RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
 		dispatcher.forward(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		if (sesionInvalida(request, response)) {
@@ -105,13 +83,13 @@ public class CategoriaController extends HttpServlet {
 			forwardError(request, response, JSP_LISTAR, "Identificador inválido.");
 		} catch (IllegalArgumentException e) {
 			forwardError(request, response, JSP_LISTAR, e.getMessage());
+		} catch (Exception e) {
+			
+			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		if (sesionInvalida(request, response)) {
@@ -134,13 +112,16 @@ public class CategoriaController extends HttpServlet {
 			forwardError(request, response, JSP_ACTUALIZAR, "Identificador inválido.");
 		} catch (IllegalArgumentException e) {
 			forwardError(request, response, JSP_ACTUALIZAR, e.getMessage());
+		} catch (Exception e) {
+			
+			e.printStackTrace();
 		}
 	}
 
 	protected void listar(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws Exception {
 		ICategoriaBL categoriaBL = new CategoriaBL();
-		List<Categoria> listaCategorias = categoriaBL.listarCategoriasActivas();
+		List<Categoria> listaCategorias = categoriaBL.listarCategorias();
 		request.setAttribute("listaCategorias", listaCategorias);
 		RequestDispatcher dispatcher = request.getRequestDispatcher(JSP_LISTAR);
 		dispatcher.forward(request, response);
@@ -154,7 +135,7 @@ public class CategoriaController extends HttpServlet {
 	}
 
 	protected void editar(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws Exception {
 		Integer id = Integer.parseInt(request.getParameter("id"));
 		ICategoriaBL categoriaBL = new CategoriaBL();
 		Categoria categoria = categoriaBL.obtenerCategoriaPorId(id);
@@ -164,7 +145,7 @@ public class CategoriaController extends HttpServlet {
 	}
 
 	protected void eliminar(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws Exception {
 		Integer id = Integer.parseInt(request.getParameter("id"));
 		ICategoriaBL categoriaBL = new CategoriaBL();
 		categoriaBL.eliminarCategoria(id);
@@ -172,7 +153,7 @@ public class CategoriaController extends HttpServlet {
 	}
 
 	protected void buscar(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws Exception {
 		String nombre = request.getParameter("nombre");
 		ICategoriaBL categoriaBL = new CategoriaBL();
 		List<Categoria> listaCategorias = categoriaBL.buscarCategoriaPorNombre(nombre);
@@ -182,8 +163,8 @@ public class CategoriaController extends HttpServlet {
 	}
 
 	protected void obtener(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// Alias of editar — kept for 8-verb spec parity (REQ-CAT-2.2).
+			throws Exception {
+		
 		Integer id = Integer.parseInt(request.getParameter("id"));
 		ICategoriaBL categoriaBL = new CategoriaBL();
 		Categoria categoria = categoriaBL.obtenerCategoriaPorId(id);
@@ -193,7 +174,7 @@ public class CategoriaController extends HttpServlet {
 	}
 
 	protected void registrar(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws Exception {
 		String nombre = request.getParameter("nombre");
 		String descripcion = request.getParameter("descripcion");
 		String estado = request.getParameter("estado");
@@ -210,7 +191,7 @@ public class CategoriaController extends HttpServlet {
 	}
 
 	protected void actualizar(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws Exception {
 		Integer id = Integer.parseInt(request.getParameter("id"));
 		String nombre = request.getParameter("nombre");
 		String descripcion = request.getParameter("descripcion");

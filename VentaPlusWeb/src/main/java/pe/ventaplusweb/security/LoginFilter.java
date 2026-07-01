@@ -1,4 +1,4 @@
-package pe.ventaplusweb.security;
+﻿package pe.ventaplusweb.security;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-//Paginas a las  que quiero que se les aplique el filter
+
 @WebFilter(urlPatterns =
 	{
 			"/principal.jsp",

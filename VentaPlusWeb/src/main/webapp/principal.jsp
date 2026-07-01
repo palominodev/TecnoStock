@@ -222,46 +222,45 @@
                             <span>Próximamente</span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Card: GESTIÓN DE CATEGORÍAS -->
-                    <div
-                        class="group relative bg-zinc-950/45 border border-white/8 rounded-3xl p-8 backdrop-blur-xl transition-all duration-500 hover:border-emerald-500/30 hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(16,185,129,0.1)] flex flex-col justify-between min-h-[320px]">
-                        <div>
-                            <!-- Icon -->
-                            <div
-                                class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(16,185,129,0.1)] group-hover:scale-110 group-hover:border-emerald-500/40 transition-all duration-300">
-                                <svg class="w-7 h-7 text-emerald-400 stroke-[2] fill-none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M6 6h.008v.008H6V6z" />
-                                </svg>
-                            </div>
-                            <!-- Title -->
-                            <h2
-                                class="text-2xl font-bold tracking-wide text-zinc-100 mb-3 group-hover:text-emerald-400 transition-colors duration-300">
-                                GESTIÓN DE CATEGORÍAS
-                            </h2>
-                            <!-- Description -->
-                            <p class="text-sm text-zinc-400 leading-relaxed">
-                                Administre el catálogo de categorías de productos, organice la jerarquía
-                                comercial y mantenga actualizados los estados del registro.
-                            </p>
+                <!-- Card: GESTIÓN DE CATEGORÍAS -->
+                <div
+                    class="group relative bg-zinc-950/45 border border-white/8 rounded-3xl p-8 backdrop-blur-xl transition-all duration-500 hover:border-emerald-500/30 hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(16,185,129,0.1)] flex flex-col justify-between min-h-[320px]">
+                    <div>
+                        <!-- Icon -->
+                        <div
+                            class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(16,185,129,0.1)] group-hover:scale-110 group-hover:border-emerald-500/40 transition-all duration-300">
+                            <svg class="w-7 h-7 text-emerald-400 stroke-[2] fill-none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6 6h.008v.008H6V6z" />
+                            </svg>
                         </div>
-                        <!-- Link/Action -->
-                        <div class="mt-8">
-                            <a href="CategoriaController?opcion=listar"
-                                class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-400 group-hover:text-emerald-300 transition-all duration-300">
-                                <span>Abrir Módulo de Categorías</span>
-                                <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </a>
-                        </div>
+                        <!-- Title -->
+                        <h2
+                            class="text-2xl font-bold tracking-wide text-zinc-100 mb-3 group-hover:text-emerald-400 transition-colors duration-300">
+                            GESTIÓN DE CATEGORÍAS
+                        </h2>
+                        <!-- Description -->
+                        <p class="text-sm text-zinc-400 leading-relaxed">
+                            Administre el catálogo de categorías de productos, organice la jerarquía
+                            comercial y mantenga actualizados los estados del registro.
+                        </p>
                     </div>
-
+                    <!-- Link/Action -->
+                    <div class="mt-8">
+                        <a href="CategoriaController?opcion=listar"
+                            class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-400 group-hover:text-emerald-300 transition-all duration-300">
+                            <span>Abrir Módulo de Categorías</span>
+                            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
             </div>

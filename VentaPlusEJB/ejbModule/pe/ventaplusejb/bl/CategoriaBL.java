@@ -67,7 +67,7 @@ public class CategoriaBL implements ICategoriaBL {
 	}
 
 	@Override
-	public List<Categoria> listarCategoriasActivas() throws Exception {
-		return dao.listarActivas();
+	public List<Categoria> listarCategorias() throws Exception {
+		return dao.listarTodas();
 	}
 }
