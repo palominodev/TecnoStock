@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0"
+			 xmlns="https://jakarta.ee/xml/ns/persistence"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+			 					 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+
+	<persistence-unit name="VentaplusPU" transaction-type="RESOURCE_LOCAL">
+		<!-- Proveedor JPA -->
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<!-- Entidades JPA -->
+		<class>pe.ventaplusejb.entity.Categoria</class>
+
+		<!-- Propiedades de Conexion a BD -->
+		<properties>
+			<property name="jakarta.persistence.jdbc.driver"
+					  value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+
+			<property name="jakarta.persistence.jdbc.url"
+					  value="jdbc:sqlserver://localhost:1433;databaseName=DBVentas;Encrypt=True;TrustServerCertificate=True"/>
+
+			<property name="jakarta.persistence.jdbc.user"
+					  value="masterpro"/>
+
+			<property name="jakarta.persistence.jdbc.password"
+					  value="password123"/>
+
+			<property name="hibernate.dialect"
+					  value="org.hibernate.dialect.SQLServerDialect"/>
+			<property name="hibernate.show_sql"
+					  value="true"/>
+			<!-- validate (no update): el esquema se controla desde database.sql -->
+			<property name="hibernate.hbm2ddl.auto"
+			  		  value="validate"/>
+		</properties>
+	</persistence-unit>
+</persistence>
