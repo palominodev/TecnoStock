@@ -33,9 +33,9 @@
             </div>
         </div>
 
-        <!-- AJAX Search Bar -->
-        <div class="mb-8">
-            <div class="relative">
+        <!-- AJAX Search Bar & Ver inactivos toggle -->
+        <div class="mb-8 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+            <div class="relative flex-1 w-full">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -44,7 +44,26 @@
                 <input type="text" id="txtBuscar" placeholder="Escribí el nombre de la sucursal para buscar en tiempo real (AJAX)..." autocomplete="off"
                        class="w-full pl-12 pr-4 py-3.5 bg-slate-900/60 border border-slate-700/60 rounded-2xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner">
             </div>
+            <label class="flex items-center gap-2 text-xs text-slate-400 hover:text-slate-300 cursor-pointer select-none shrink-0">
+                <input type="checkbox" id="chkInactivos" class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500/30 cursor-pointer"
+                    <% if ("true".equals(request.getParameter("inactivos"))) { %>checked<% } %>>
+                Ver inactivos
+            </label>
         </div>
+
+        <script>
+          // Toggle ?inactivos=true on the URL when checkbox changes
+          document.getElementById('chkInactivos').addEventListener('change', function () {
+            var params = new URLSearchParams(window.location.search);
+            if (this.checked) {
+              params.set('inactivos', 'true');
+            } else {
+              params.delete('inactivos');
+            }
+            var qs = params.toString();
+            window.location.search = qs ? '?' + qs : '';
+          });
+        </script>
 
         <!-- Sucursales Data Table -->
         <div class="overflow-x-auto rounded-2xl border border-slate-700/60 shadow-xl bg-slate-900/40">
