@@ -18,45 +18,31 @@
                 <p class="text-xs sm:text-sm text-slate-400 mt-1">Control de operaciones comerciales y consultas filtradas por cliente.</p>
             </div>
             <div>
-                <form action="venta" method="POST" class="m-0">
-                    <input type="hidden" name="opcion" value="nuevo">
-                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-0.5 transition-all cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Nueva Venta
-                    </button>
-                </form>
+                <a href="#" onclick="return false;"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-0.5 transition-all opacity-50 cursor-not-allowed"
+                   title="Funcionalidad pendiente — formulario de venta no implementado">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Nueva Venta
+                </a>
             </div>
         </div>
 
-        <!-- Search / Filter Bar -->
+        <!-- AJAX Cliente Filter -->
         <div class="mb-8 p-4 bg-slate-900/60 border border-slate-700/60 rounded-2xl shadow-inner">
-            <form action="venta" method="GET" class="flex flex-col sm:flex-row gap-4 items-center m-0">
-                <input type="hidden" name="opcion" value="buscarxCliente">
-                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 sm:min-w-[70px]">Cliente:</label>
-                <select name="idCliente" 
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+                <label for="selCliente" class="text-xs font-semibold uppercase tracking-wider text-slate-400 sm:min-w-[70px]">Cliente:</label>
+                <select id="selCliente"
                         class="flex-1 w-full px-4 py-2.5 bg-slate-950/70 border border-slate-700/80 rounded-xl text-white text-sm focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition-all">
-                    <c:forEach items="${listaClientes}" var="cliente">
-                        <option value="${cliente.id}" ${param.idCliente == cliente.id ? 'selected' : ''}>
-                            ${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno} (DNI: ${cliente.dni})
-                        </option>
-                    </c:forEach>
+                    <option value="">Todos los clientes</option>
                 </select>
-                <div class="flex gap-2 w-full sm:w-auto">
-                    <button type="submit" class="flex-1 sm:flex-initial px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all cursor-pointer">
-                        Buscar
-                    </button>
-                    <a href="home?opcion=gestionarVentas" class="flex-1 sm:flex-initial px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold border border-slate-700 transition-all text-center">
-                        Limpiar
-                    </a>
-                </div>
-            </form>
+            </div>
         </div>
 
         <!-- Ventas Data Table -->
         <div class="overflow-x-auto rounded-2xl border border-slate-700/60 shadow-xl bg-slate-900/40">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse" aria-busy="true">
                 <thead>
                     <tr class="bg-indigo-950/40 border-b border-slate-700/80 text-pink-300 uppercase tracking-wider text-xs font-semibold">
                         <th class="px-6 py-4">ID</th>
@@ -66,42 +52,14 @@
                         <th class="px-6 py-4 text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-700/40">
-                    <c:choose>
-                        <c:when test="${not empty listaVentas}">
-                            <c:forEach var="venta" items="${listaVentas}">
-                                <tr class="hover:bg-pink-500/10 transition-colors">
-                                    <td class="px-6 py-4 text-sm text-slate-300 font-medium">${venta.id}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-300 font-mono">${venta.fecha}</td>
-                                    <td class="px-6 py-4 text-sm font-semibold text-white">${venta.cliente.nombre} ${venta.cliente.apellidoPaterno} ${venta.cliente.apellidoMaterno}</td>
-                                    <td class="px-6 py-4 text-sm font-bold text-emerald-400 font-mono">S/ ${venta.total}</td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <a href="venta?opcion=editar&id=${venta.id}" 
-                                               class="px-3 py-1.5 text-xs font-medium text-indigo-300 hover:text-white bg-indigo-500/10 hover:bg-indigo-600/30 border border-indigo-500/30 rounded-lg transition-all shadow-sm">
-                                                Editar
-                                            </a>
-                                            <a href="venta?opcion=eliminar&id=${venta.id}" 
-                                               class="px-3 py-1.5 text-xs font-medium text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-600/30 border border-rose-500/30 rounded-lg transition-all shadow-sm"
-                                               onclick="return confirm('¿Estás seguro de que deseas eliminar esta venta ID ${venta.id}?');">
-                                                Eliminar
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-slate-400 text-sm">
-                                    No se encontraron ventas registradas.
-                                </td>
-                            </tr>
-                        </c:otherwise>
-                    </c:choose>
+                <tbody id="tbodyVentas" class="divide-y divide-slate-700/40">
+                    <!-- AJAX-populated via ventaAjax.js -->
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script src="js/ui.js"></script>
+    <script src="js/ventaAjax.js"></script>
 </body>
 </html>
