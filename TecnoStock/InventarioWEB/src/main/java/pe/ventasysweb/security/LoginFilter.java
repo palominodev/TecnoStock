@@ -24,7 +24,9 @@ import jakarta.servlet.http.HttpServletResponse;
     "/gestionClientesAjax.jsp",
     "/nuevoCliente.jsp",
     "/editarCliente.jsp",
-    "/gestionProveedores.jsp"
+    "/gestionProveedores.jsp",
+    "/gestionVentas.jsp",
+    "/venta"
 })
 public class LoginFilter implements Filter {
 
