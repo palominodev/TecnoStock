@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+  <persistence-unit name="BD_TecnoStockPU" transaction-type="RESOURCE_LOCAL">
+    <!-- Proveedor JPA estándar (Hibernate) -->
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <class>pe.ventasysejb.entity.Sucursal</class>
+    <class>pe.ventasysejb.entity.Categoria</class>
+    <class>pe.ventasysejb.entity.Producto</class>
+    <class>pe.ventasysejb.entity.Usuario</class>
+    <class>pe.ventasysejb.entity.Cliente</class>
+    <class>pe.ventasysejb.entity.Venta</class>
+    <class>pe.ventasysejb.model.Proveedor</class>
+
+    <properties>
+      <!-- Configuración de Conexión Directa JDBC (Útil para pruebas locales o si el servidor no usa JTA) -->
+      <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://PALOMINODEV\SQLEXPRESS;databaseName=BD_TecnoStock;encrypt=true;trustServerCertificate=true;"/>
+      <property name="jakarta.persistence.jdbc.user" value="masterpro"/>
+      <property name="jakarta.persistence.jdbc.password" value="password123"/>
+
+      <!-- Muestra las consultas SQL en la consola del servidor de aplicaciones -->
+      <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.format_sql" value="true"/>
+    </properties>
+  </persistence-unit>
+</persistence>
