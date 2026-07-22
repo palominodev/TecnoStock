@@ -50,6 +50,15 @@ public class ProveedorController extends HttpServlet {
             case "eliminar":
                 eliminar(request, response);
                 break;
+            case "reactivar":
+                reactivar(request, response);
+                break;
+            case "buscarProveedoresTodos":
+                buscarProveedoresTodos(request, response);
+                break;
+            case "listarJson":
+                listarJson(request, response);
+                break;
             case "listar":
             default:
                 listar(request, response);
@@ -79,8 +88,92 @@ public class ProveedorController extends HttpServlet {
 
     private void eliminar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        proveedorBL.eliminarProveedor(id);
+
+        if (isFetchRequest(request)) {
+            // Controller-side soft delete (ADR-3): IProveedorBL has no eliminarLogico
+            try {
+                Proveedor p = proveedorBL.obtenerProveedorPorId(id);
+                if (p != null) {
+                    p.setEstado(ESTADO_INACTIVO);
+                    proveedorBL.actualizarProveedor(p);
+                    writeJson(response, true, "Proveedor desactivado", null);
+                } else {
+                    List<String> errors = new ArrayList<>();
+                    errors.add("Proveedor no encontrado");
+                    writeJson(response, false, null, errors);
+                }
+            } catch (Exception e) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Error: " + e.getMessage());
+                writeJson(response, false, null, errors);
+            }
+            return;
+        }
+
+        // Legacy flow — also soft delete (no hard delete path remains)
+        Proveedor p = proveedorBL.obtenerProveedorPorId(id);
+        if (p != null) {
+            p.setEstado(ESTADO_INACTIVO);
+            proveedorBL.actualizarProveedor(p);
+        }
         response.sendRedirect("proveedor?opcion=listar");
+    }
+
+    private void reactivar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        if (isFetchRequest(request)) {
+            try {
+                Proveedor p = proveedorBL.obtenerProveedorPorId(id);
+                if (p != null) {
+                    p.setEstado(ESTADO_ACTIVO);
+                    proveedorBL.actualizarProveedor(p);
+                    writeJson(response, true, "Proveedor reactivado", null);
+                } else {
+                    List<String> errors = new ArrayList<>();
+                    errors.add("Proveedor no encontrado");
+                    writeJson(response, false, null, errors);
+                }
+            } catch (Exception e) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Error: " + e.getMessage());
+                writeJson(response, false, null, errors);
+            }
+            return;
+        }
+
+        // Legacy flow (unlikely caller, but supported)
+        Proveedor p = proveedorBL.obtenerProveedorPorId(id);
+        if (p != null) {
+            p.setEstado(ESTADO_ACTIVO);
+            proveedorBL.actualizarProveedor(p);
+        }
+        response.sendRedirect("proveedor?opcion=listar");
+    }
+
+    private void buscarProveedoresTodos(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<Proveedor> lista = proveedorBL.listarProveedores();
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().print(gson.toJson(lista));
+    }
+
+    private void listarJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String inactivosParam = request.getParameter("inactivos");
+        boolean incluirInactivos = "true".equalsIgnoreCase(inactivosParam);
+
+        List<Proveedor> lista = proveedorBL.listarProveedores();
+        if (!incluirInactivos) {
+            List<Proveedor> activos = new ArrayList<>();
+            for (Proveedor p : lista) {
+                if (ESTADO_ACTIVO.equalsIgnoreCase(p.getEstado())) {
+                    activos.add(p);
+                }
+            }
+            lista = activos;
+        }
+
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().print(gson.toJson(lista));
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -92,6 +185,44 @@ public class ProveedorController extends HttpServlet {
     }
 
     private void guardar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (isFetchRequest(request)) {
+            try {
+                String idStr = request.getParameter("id");
+                String ruc = request.getParameter("ruc");
+                String razonSocial = request.getParameter("razonSocial");
+                String direccion = request.getParameter("direccion");
+                String telefono = request.getParameter("telefono");
+                String nombreContacto = request.getParameter("nombreContacto");
+                String estado = request.getParameter("estado");
+                if (estado == null) {
+                    estado = ESTADO_ACTIVO;
+                }
+
+                Proveedor p = new Proveedor();
+                p.setRuc(ruc);
+                p.setRazonSocial(razonSocial);
+                p.setDireccion(direccion);
+                p.setTelefono(telefono);
+                p.setNombreContacto(nombreContacto);
+                p.setEstado(estado);
+
+                if (idStr != null && !idStr.trim().isEmpty()) {
+                    p.setId(Integer.parseInt(idStr));
+                    proveedorBL.actualizarProveedor(p);
+                    writeJson(response, true, "Proveedor actualizado", null);
+                } else {
+                    proveedorBL.registrarProveedor(p);
+                    writeJson(response, true, "Proveedor registrado", null);
+                }
+            } catch (Exception e) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Error: " + e.getMessage());
+                writeJson(response, false, null, errors);
+            }
+            return;
+        }
+
+        // Legacy flow
         String idStr = request.getParameter("id");
         String ruc = request.getParameter("ruc");
         String razonSocial = request.getParameter("razonSocial");
@@ -100,7 +231,7 @@ public class ProveedorController extends HttpServlet {
         String nombreContacto = request.getParameter("nombreContacto");
         String estado = request.getParameter("estado");
         if (estado == null) {
-            estado = "Activo";
+            estado = ESTADO_ACTIVO;
         }
 
         Proveedor p = new Proveedor();
