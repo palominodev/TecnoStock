@@ -10,13 +10,26 @@ import pe.ventasysejb.businesslogic.IProveedorBL;
 import pe.ventasysejb.businesslogic.ProveedorBL;
 import pe.ventasysejb.model.Proveedor;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import com.google.gson.Gson;
 
 @WebServlet("/proveedor")
 public class ProveedorController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private IProveedorBL proveedorBL = new ProveedorBL();
+    private Gson gson = new Gson();
+
+    // ── Estado value convention ───────────────────────────────────────────
+    // Proveedor uses "Activo" / "Inactivo" (capitalized words).
+    // Same pattern as Sucursal ("activo"/"inactivo"). Verified from
+    // ProveedorController.guardar() default: estado = "Activo" (line 90).
+    // Cliente uses "A"/"I" — per-entity convention, see ADR-3 in design.
+    private static final String ESTADO_ACTIVO = "Activo";
+    private static final String ESTADO_INACTIVO = "Inactivo";
 
     public ProveedorController() {
         super();
@@ -106,5 +119,26 @@ public class ProveedorController extends HttpServlet {
         }
 
         response.sendRedirect("proveedor?opcion=listar");
+    }
+
+    // ── JSON helpers ─────────────────────────────────────────────────────
+
+    private boolean isFetchRequest(HttpServletRequest req) {
+        String header = req.getHeader("X-Requested-With");
+        return "fetch".equalsIgnoreCase(header);
+    }
+
+    private void writeJson(HttpServletResponse resp, boolean ok, String msg, List<String> errors)
+            throws IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        Map<String, Object> env = new LinkedHashMap<>();
+        env.put("ok", ok);
+        if (msg != null) {
+            env.put("msg", msg);
+        }
+        if (errors != null) {
+            env.put("errors", errors);
+        }
+        resp.getWriter().print(gson.toJson(env));
     }
 }
