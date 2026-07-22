@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import pe.ventasysejb.businesslogic.SucursalBL;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -49,6 +50,9 @@ public class SucursalController extends HttpServlet {
             case "eliminar":
                 eliminar(request, response);
                 break;
+            case "reactivar":
+                reactivar(request, response);
+                break;
             default:
                 listar(request, response);
                 break;
@@ -58,6 +62,12 @@ public class SucursalController extends HttpServlet {
     private void listar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Sucursal> lista = sucursalBL.listarSucursales();
+        String inactivos = request.getParameter("inactivos");
+        if (!"true".equalsIgnoreCase(inactivos)) {
+            lista = lista.stream()
+                .filter(s -> "activo".equalsIgnoreCase(s.getEstado()))
+                .collect(Collectors.toList());
+        }
         request.setAttribute("listaSucursales", lista);
         request.getRequestDispatcher("gestionSucursales.jsp").forward(request, response);
     }
@@ -66,7 +76,14 @@ public class SucursalController extends HttpServlet {
             throws ServletException, IOException {
         String nombre = request.getParameter("nombre");
         List<Sucursal> lista = sucursalBL.buscarSucursalesPorNombre(nombre);
-        
+
+        String inactivos = request.getParameter("inactivos");
+        if (!"true".equalsIgnoreCase(inactivos)) {
+            lista = lista.stream()
+                .filter(s -> "activo".equalsIgnoreCase(s.getEstado()))
+                .collect(Collectors.toList());
+        }
+
         response.setContentType("application/json;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.print(toJson(lista));
@@ -164,10 +181,12 @@ public class SucursalController extends HttpServlet {
         if (isFetchRequest(request)) {
             try {
                 int id = Integer.parseInt(request.getParameter("id"));
-                // Hard delete in slice 1a (soft delete comes in slice 1b)
-                sucursalBL.eliminarSucursal(id);
-
-                writeJson(response, true, "Sucursal eliminada", null);
+                Sucursal s = sucursalBL.obtenerSucursalPorId(id);
+                if (s != null) {
+                    s.setEstado("inactivo");
+                    sucursalBL.actualizarSucursal(s);
+                }
+                writeJson(response, true, "Sucursal desactivada", null);
             } catch (Exception e) {
                 List<String> errors = new ArrayList<>();
                 errors.add("Error: " + e.getMessage());
@@ -177,7 +196,39 @@ public class SucursalController extends HttpServlet {
         }
         // Legacy flow
         int id = Integer.parseInt(request.getParameter("id"));
-        sucursalBL.eliminarSucursal(id);
+        Sucursal s = sucursalBL.obtenerSucursalPorId(id);
+        if (s != null) {
+            s.setEstado("inactivo");
+            sucursalBL.actualizarSucursal(s);
+        }
+        response.sendRedirect("SucursalController?accion=listar");
+    }
+
+    private void reactivar(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        if (isFetchRequest(request)) {
+            try {
+                int id = Integer.parseInt(request.getParameter("id"));
+                Sucursal s = sucursalBL.obtenerSucursalPorId(id);
+                if (s != null) {
+                    s.setEstado("activo");
+                    sucursalBL.actualizarSucursal(s);
+                }
+                writeJson(response, true, "Sucursal reactivada", null);
+            } catch (Exception e) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Error: " + e.getMessage());
+                writeJson(response, false, null, errors);
+            }
+            return;
+        }
+        // Legacy flow
+        int id = Integer.parseInt(request.getParameter("id"));
+        Sucursal s = sucursalBL.obtenerSucursalPorId(id);
+        if (s != null) {
+            s.setEstado("activo");
+            sucursalBL.actualizarSucursal(s);
+        }
         response.sendRedirect("SucursalController?accion=listar");
     }
 
