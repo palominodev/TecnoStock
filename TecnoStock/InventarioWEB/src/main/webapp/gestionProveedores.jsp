@@ -15,9 +15,9 @@
                 <h1 class="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400">
                     Gestión de Proveedores
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-400 mt-1">Administración de datos de contacto y RUC de proveedores.</p>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">Búsqueda instantánea y administración de proveedores vía AJAX.</p>
             </div>
-            <div>
+            <div class="flex flex-wrap items-center gap-3">
                 <a href="proveedor?opcion=nuevo" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:-translate-y-0.5 transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -27,9 +27,22 @@
             </div>
         </div>
 
+        <!-- AJAX Search Bar -->
+        <div class="mb-8">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <input type="text" id="txtBuscar" placeholder="Búsqueda instantánea por RUC, razón social, dirección o contacto..." autocomplete="off"
+                       class="w-full pl-12 pr-4 py-3.5 bg-slate-900/60 border border-slate-700/60 rounded-2xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-inner">
+            </div>
+        </div>
+
         <!-- Proveedores Data Table -->
         <div class="overflow-x-auto rounded-2xl border border-slate-700/60 shadow-xl bg-slate-900/40">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse" aria-busy="true">
                 <thead>
                     <tr class="bg-indigo-950/40 border-b border-slate-700/80 text-amber-300 uppercase tracking-wider text-xs font-semibold">
                         <th class="px-6 py-4">ID</th>
@@ -41,44 +54,14 @@
                         <th class="px-6 py-4 text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-700/40">
-                    <c:choose>
-                        <c:when test="${not empty listaProveedores}">
-                            <c:forEach var="prov" items="${listaProveedores}">
-                                <tr class="hover:bg-amber-500/10 transition-colors">
-                                    <td class="px-6 py-4 text-sm text-slate-300 font-medium">${prov.id}</td>
-                                    <td class="px-6 py-4 text-sm font-mono text-amber-300 font-medium">${prov.ruc}</td>
-                                    <td class="px-6 py-4 text-sm font-semibold text-white">${prov.razonSocial}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-300">${prov.direccion}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-300 font-mono">${prov.telefono}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-300">${prov.nombreContacto}</td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <a href="proveedor?opcion=editar&id=${prov.id}" 
-                                               class="px-3 py-1.5 text-xs font-medium text-amber-300 hover:text-white bg-amber-500/10 hover:bg-amber-600/30 border border-amber-500/30 rounded-lg transition-all shadow-sm">
-                                                Editar
-                                            </a>
-                                            <a href="proveedor?opcion=eliminar&id=${prov.id}" 
-                                               class="px-3 py-1.5 text-xs font-medium text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-600/30 border border-rose-500/30 rounded-lg transition-all shadow-sm"
-                                               onclick="return confirm('¿Estás seguro de que querés eliminar al proveedor \'${prov.razonSocial}\'?');">
-                                                Eliminar
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <tr>
-                                <td colspan="7" class="px-6 py-10 text-center text-slate-400 text-sm">
-                                    No se encontraron proveedores registrados.
-                                </td>
-                            </tr>
-                        </c:otherwise>
-                    </c:choose>
+                <tbody id="tbodyProveedores" class="divide-y divide-slate-700/40">
+                    <!-- AJAX-populated via proveedorAjax.js -->
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script src="js/ui.js"></script>
+    <script src="js/proveedorAjax.js"></script>
 </body>
 </html>
