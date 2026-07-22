@@ -1,0 +1,29 @@
+# Eclipse
+.metadata/
+.settings/
+.classpath
+.project
+*.class
+
+# Maven
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Codegraph
+.codegraph/
+
+# Logs
+*.log
+
+# Temp
+/tmp/
