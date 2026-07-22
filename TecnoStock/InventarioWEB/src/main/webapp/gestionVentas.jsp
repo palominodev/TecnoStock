@@ -3,28 +3,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecnoStock - Gestión de Ventas</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/estilos.css">
+    <%@ include file="includes/head.jspf" %>
 </head>
 <body class="p-4 sm:p-8 flex justify-center items-start min-h-screen">
     <div class="w-full max-w-6xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl my-6">
-        <!-- User Topbar -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-slate-700/50">
-            <span class="text-sm text-slate-400 font-medium">
-                Bienvenido, <strong class="text-white">${usuarioLogueado.nombres} ${usuarioLogueado.apellidos}</strong>
-            </span>
-            <div class="flex items-center gap-3">
-                <a href="home?opcion=principal" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all shadow-sm">
-                    Inicio
-                </a>
-                <a href="UsuarioController?accion=logout" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all shadow-sm">
-                    Cerrar Sesión
-                </a>
-            </div>
-        </div>
+        <jsp:include page="includes/topbar.jsp" />
 
         <!-- Header Title & Action Buttons -->
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">

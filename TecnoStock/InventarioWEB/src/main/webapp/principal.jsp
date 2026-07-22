@@ -3,35 +3,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecnoStock - Panel Principal</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/estilos.css">
+    <%@ include file="includes/head.jspf" %>
 </head>
 <body class="p-4 sm:p-8 flex justify-center items-start min-h-screen">
     <div class="w-full max-w-6xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl my-6">
-        <!-- Top bar -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-slate-700/50">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg">
-                    TS
-                </div>
-                <div>
-                    <span class="text-xs uppercase tracking-wider text-slate-400 font-medium block">Usuario Activo</span>
-                    <span class="text-sm font-semibold text-white">
-                        ${usuarioLogueado.nombres} ${usuarioLogueado.apellidos}
-                    </span>
-                </div>
-            </div>
-            <a href="UsuarioController?accion=logout" 
-               class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-                Cerrar Sesión
-            </a>
-        </div>
+        <jsp:include page="includes/topbar.jsp" />
 
         <!-- Header content -->
         <div class="text-center max-w-2xl mx-auto mb-12">
