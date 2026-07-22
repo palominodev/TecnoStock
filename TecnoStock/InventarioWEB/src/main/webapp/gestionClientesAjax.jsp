@@ -4,77 +4,6 @@
 <html lang="es">
 <head>
     <%@ include file="includes/head.jspf" %>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            cargarClientes();
-
-            document.getElementById("txtBuscar").addEventListener("input", function(e) {
-                var query = e.target.value.toLowerCase();
-                filterTable(query);
-            });
-        });
-
-        function cargarClientes() {
-            var tbody = document.getElementById("tbodyClientes");
-            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 text-sm">Cargando clientes...</td></tr>';
-            
-            fetch("cliente?opcion=buscarClientesTodos")
-                .then(response => response.json())
-                .then(data => {
-                    window.clientesData = data;
-                    renderTable(data);
-                })
-                .catch(error => {
-                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-rose-400 text-sm">Error al cargar datos: ' + error + '</td></tr>';
-                });
-        }
-
-        function renderTable(data) {
-            var tbody = document.getElementById("tbodyClientes");
-            tbody.innerHTML = "";
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 text-sm">No se encontraron clientes.</td></tr>';
-                return;
-            }
-            data.forEach(cliente => {
-                var tr = document.createElement("tr");
-                tr.className = "hover:bg-indigo-500/10 transition-colors border-b border-slate-700/40";
-                var esActivo = cliente.estado && cliente.estado.toLowerCase() === 'a';
-                var badgeClass = esActivo ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border border-rose-500/30';
-                var badgeLabel = esActivo ? 'Activo' : 'Inactivo';
-                tr.innerHTML = `
-                    <td class="px-6 py-4 text-sm text-slate-300 font-medium">${cliente.id}</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-white">${cliente.nombre}</td>
-                    <td class="px-6 py-4 text-sm text-slate-300">${cliente.apellidoPaterno} ${cliente.apellidoMaterno}</td>
-                    <td class="px-6 py-4 text-sm text-slate-300 font-mono">${cliente.dni}</td>
-                    <td class="px-6 py-4 text-sm">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
-                            ${badgeLabel}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm">
-                        <div class="flex items-center justify-center gap-2">
-                            <a href="cliente?opcion=editar&id=${cliente.id}" class="px-3 py-1.5 text-xs font-medium text-indigo-300 hover:text-white bg-indigo-500/10 hover:bg-indigo-600/30 border border-indigo-500/30 rounded-lg transition-all shadow-sm">Editar</a>
-                            <a href="cliente?opcion=eliminar&id=${cliente.id}" class="px-3 py-1.5 text-xs font-medium text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-600/30 border border-rose-500/30 rounded-lg transition-all shadow-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este cliente?');">Eliminar</a>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function filterTable(query) {
-            if (!window.clientesData) return;
-            var filtered = window.clientesData.filter(cliente => {
-                var matchesNombre = cliente.nombre && cliente.nombre.toLowerCase().includes(query);
-                var matchesPaterno = cliente.apellidoPaterno && cliente.apellidoPaterno.toLowerCase().includes(query);
-                var matchesMaterno = cliente.apellidoMaterno && cliente.apellidoMaterno.toLowerCase().includes(query);
-                var matchesDni = cliente.dni && cliente.dni.includes(query);
-                return matchesNombre || matchesPaterno || matchesMaterno || matchesDni;
-            });
-            renderTable(filtered);
-        }
-    </script>
 </head>
 <body class="p-4 sm:p-8 flex justify-center items-start min-h-screen">
     <div class="w-full max-w-6xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl my-6">
@@ -112,6 +41,11 @@
                 <input type="text" id="txtBuscar" placeholder="Búsqueda instantánea por nombre, apellido o DNI..." autocomplete="off"
                        class="w-full pl-12 pr-4 py-3.5 bg-slate-900/60 border border-slate-700/60 rounded-2xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner">
             </div>
+            <div class="flex items-center gap-2 mt-3">
+                <input type="checkbox" id="chkInactivos"
+                       class="w-4 h-4 rounded bg-slate-800 border-slate-600 text-indigo-600 focus:ring-indigo-500/30 cursor-pointer">
+                <label for="chkInactivos" class="text-xs text-slate-400 font-medium cursor-pointer select-none hover:text-slate-300 transition-colors">Ver inactivos</label>
+            </div>
         </div>
 
         <!-- Table -->
@@ -133,5 +67,8 @@
             </table>
         </div>
     </div>
+    <script src="js/ui.js"></script>
+    <script src="js/clienteAjax.js"></script>
+    <script>document.addEventListener("DOMContentLoaded", function() { clienteAjax.init(); });</script>
 </body>
 </html>
