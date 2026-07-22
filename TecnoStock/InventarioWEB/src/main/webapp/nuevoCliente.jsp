@@ -13,7 +13,7 @@
             Registrar Nuevo Cliente
         </h2>
 
-        <form action="cliente" method="POST" class="space-y-5">
+        <form id="formCliente" action="cliente" method="POST" class="space-y-5">
             <input type="hidden" name="opcion" value="registrar">
 
             <div>
@@ -60,5 +60,31 @@
             </div>
         </form>
     </div>
+    <script src="js/ui.js"></script>
+    <script>
+        document.getElementById('formCliente').addEventListener('submit', function(e) {
+            if (typeof fetch === 'undefined') return; // fallback to normal POST
+            e.preventDefault();
+            var form = e.target;
+            fetch('cliente?opcion=registrar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'fetch' },
+                body: new URLSearchParams(new FormData(form))
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.ok) {
+                    ui.toast({ type: 'success', message: res.msg || 'Cliente guardado' });
+                    setTimeout(function() { window.location.href = 'gestionClientesAjax.jsp'; }, 800);
+                } else {
+                    var errMsg = (res.errors && res.errors.length) ? res.errors.join(', ') : 'Error al guardar';
+                    ui.toast({ type: 'error', message: errMsg });
+                }
+            })
+            .catch(function(err) {
+                ui.toast({ type: 'error', message: err.message || 'Error de conexión' });
+            });
+        });
+    </script>
 </body>
 </html>
