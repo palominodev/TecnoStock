@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
     "/ProductoController",
     "/cliente",
     "/proveedor",
-    "/gestionClientes.jsp",
     "/gestionClientesAjax.jsp",
     "/nuevoCliente.jsp",
     "/editarCliente.jsp",

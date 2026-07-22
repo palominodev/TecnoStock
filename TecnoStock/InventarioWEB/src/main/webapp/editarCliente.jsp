@@ -13,7 +13,7 @@
             Editar Cliente <span class="text-xs text-indigo-400 font-medium font-mono">(ID: ${cliente.id})</span>
         </h2>
 
-        <form action="cliente" method="POST" class="space-y-5">
+        <form id="formEditarCliente" action="cliente" method="POST" class="space-y-5">
             <input type="hidden" name="opcion" value="registrar">
             <input type="hidden" name="id" value="${cliente.id}">
 
@@ -61,5 +61,31 @@
             </div>
         </form>
     </div>
+    <script src="js/ui.js"></script>
+    <script>
+        document.getElementById('formEditarCliente').addEventListener('submit', function(e) {
+            if (typeof fetch === 'undefined') return;
+            e.preventDefault();
+            var form = e.target;
+            fetch('cliente?opcion=registrar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'fetch' },
+                body: new URLSearchParams(new FormData(form))
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.ok) {
+                    ui.toast({ type: 'success', message: res.msg || 'Cliente actualizado' });
+                    setTimeout(function() { window.location.href = 'gestionClientesAjax.jsp'; }, 800);
+                } else {
+                    var errMsg = (res.errors && res.errors.length) ? res.errors.join(', ') : 'Error al actualizar';
+                    ui.toast({ type: 'error', message: errMsg });
+                }
+            })
+            .catch(function(err) {
+                ui.toast({ type: 'error', message: err.message || 'Error de conexión' });
+            });
+        });
+    </script>
 </body>
 </html>
