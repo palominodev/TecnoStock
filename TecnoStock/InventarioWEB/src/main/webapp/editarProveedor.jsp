@@ -3,23 +3,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecnoStock - Editar Proveedor</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/estilos.css">
+    <%@ include file="includes/head.jspf" %>
 </head>
 <body class="p-4 sm:p-8 flex justify-center items-start min-h-screen">
     <div class="w-full max-w-xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl my-6">
-        <!-- User Topbar -->
-        <div class="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-700/50">
-            <span class="text-xs sm:text-sm text-slate-400 font-medium">
-                Bienvenido, <strong class="text-white">${usuarioLogueado.nombres} ${usuarioLogueado.apellidos}</strong>
-            </span>
-            <a href="proveedor?opcion=listar" class="px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all">
-                Volver al Listado
-            </a>
-        </div>
+        <jsp:include page="includes/topbar.jsp" />
 
         <h2 class="text-2xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 mb-6">
             Editar Proveedor <span class="text-xs text-amber-400 font-medium font-mono">(ID: ${proveedor.id})</span>

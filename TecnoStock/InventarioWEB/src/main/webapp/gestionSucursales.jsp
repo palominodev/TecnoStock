@@ -3,28 +3,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecnoStock - Gestión de Sucursales</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/estilos.css">
+    <%@ include file="includes/head.jspf" %>
 </head>
 <body class="p-4 sm:p-8 flex justify-center items-start min-h-screen">
     <div class="w-full max-w-6xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl my-6">
-        <!-- User Topbar -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-slate-700/50">
-            <span class="text-sm text-slate-400 font-medium">
-                Bienvenido, <strong class="text-white">${usuarioLogueado.nombres} ${usuarioLogueado.apellidos}</strong>
-            </span>
-            <div class="flex items-center gap-3">
-                <a href="home?opcion=principal" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all shadow-sm">
-                    Inicio
-                </a>
-                <a href="UsuarioController?accion=logout" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all shadow-sm">
-                    Cerrar Sesión
-                </a>
-            </div>
-        </div>
+        <jsp:include page="includes/topbar.jsp" />
 
         <!-- Header Title & Action Buttons -->
         <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
@@ -65,7 +48,7 @@
 
         <!-- Sucursales Data Table -->
         <div class="overflow-x-auto rounded-2xl border border-slate-700/60 shadow-xl bg-slate-900/40">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse" aria-busy="false">
                 <thead>
                     <tr class="bg-indigo-950/40 border-b border-slate-700/80 text-indigo-300 uppercase tracking-wider text-xs font-semibold">
                         <th class="px-6 py-4">Código</th>
@@ -76,48 +59,13 @@
                     </tr>
                 </thead>
                 <tbody id="tbodySucursales" class="divide-y divide-slate-700/40">
-                    <c:choose>
-                        <c:when test="${not empty listaSucursales}">
-                            <c:forEach var="sucursal" items="${listaSucursales}">
-                                <tr class="hover:bg-indigo-500/10 transition-colors">
-                                    <td class="px-6 py-4 text-sm text-slate-300 font-medium">${sucursal.idSucursal}</td>
-                                    <td class="px-6 py-4 text-sm font-semibold text-white">${sucursal.nombre}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-300">${sucursal.direccion}</td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${sucursal.estado.toLowerCase() == 'activo' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'}">
-                                            ${sucursal.estado}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <div class="flex items-center gap-2">
-                                            <a href="SucursalController?accion=editar&id=${sucursal.idSucursal}" 
-                                               class="px-3 py-1.5 text-xs font-medium text-indigo-300 hover:text-white bg-indigo-500/10 hover:bg-indigo-600/30 border border-indigo-500/30 rounded-lg transition-all shadow-sm">
-                                                Editar
-                                            </a>
-                                            <a href="SucursalController?accion=eliminar&id=${sucursal.idSucursal}" 
-                                               class="px-3 py-1.5 text-xs font-medium text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-600/30 border border-rose-500/30 rounded-lg transition-all shadow-sm"
-                                               onclick="return confirm('¿Estás seguro de que querés eliminar la sucursal \'${sucursal.nombre}\'?');">
-                                                Eliminar
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-slate-400 text-sm">
-                                    No hay sucursales registradas. Hacé click en "+ Nueva Sucursal" para registrar una.
-                                </td>
-                            </tr>
-                        </c:otherwise>
-                    </c:choose>
+                    <!-- AJAX-populated via sucursalAjax.js -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- AJAX Script -->
+    <script src="js/ui.js"></script>
     <script src="js/sucursalAjax.js"></script>
 </body>
 </html>

@@ -4,8 +4,12 @@ import pe.ventasysejb.businesslogic.ISucursalBL;
 import pe.ventasysejb.entity.Sucursal;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import pe.ventasysejb.businesslogic.SucursalBL;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SucursalController extends HttpServlet {
 
     private ISucursalBL sucursalBL = new SucursalBL();
+    private Gson gson = new Gson();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -70,6 +75,25 @@ public class SucursalController extends HttpServlet {
 
     private void registrar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (isFetchRequest(request)) {
+            try {
+                String nombre = request.getParameter("nombre");
+                String direccion = request.getParameter("direccion");
+                String telefono = request.getParameter("telefono");
+                String estado = request.getParameter("estado");
+
+                Sucursal nueva = new Sucursal(nombre, direccion, telefono, estado);
+                sucursalBL.registrarSucursal(nueva);
+
+                writeJson(response, true, "Sucursal registrada", null);
+            } catch (Exception e) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Error: " + e.getMessage());
+                writeJson(response, false, null, errors);
+            }
+            return;
+        }
+        // Legacy flow
         String nombre = request.getParameter("nombre");
         String direccion = request.getParameter("direccion");
         String telefono = request.getParameter("telefono");
@@ -91,6 +115,32 @@ public class SucursalController extends HttpServlet {
 
     private void actualizar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (isFetchRequest(request)) {
+            try {
+                int id = Integer.parseInt(request.getParameter("id"));
+                String nombre = request.getParameter("nombre");
+                String direccion = request.getParameter("direccion");
+                String telefono = request.getParameter("telefono");
+                String estado = request.getParameter("estado");
+
+                Sucursal sucursal = sucursalBL.obtenerSucursalPorId(id);
+                if (sucursal != null) {
+                    sucursal.setNombre(nombre);
+                    sucursal.setDireccion(direccion);
+                    sucursal.setTelefono(telefono);
+                    sucursal.setEstado(estado);
+                    sucursalBL.actualizarSucursal(sucursal);
+                }
+
+                writeJson(response, true, "Sucursal actualizada", null);
+            } catch (Exception e) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Error: " + e.getMessage());
+                writeJson(response, false, null, errors);
+            }
+            return;
+        }
+        // Legacy flow
         int id = Integer.parseInt(request.getParameter("id"));
         String nombre = request.getParameter("nombre");
         String direccion = request.getParameter("direccion");
@@ -111,6 +161,21 @@ public class SucursalController extends HttpServlet {
 
     private void eliminar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (isFetchRequest(request)) {
+            try {
+                int id = Integer.parseInt(request.getParameter("id"));
+                // Hard delete in slice 1a (soft delete comes in slice 1b)
+                sucursalBL.eliminarSucursal(id);
+
+                writeJson(response, true, "Sucursal eliminada", null);
+            } catch (Exception e) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Error: " + e.getMessage());
+                writeJson(response, false, null, errors);
+            }
+            return;
+        }
+        // Legacy flow
         int id = Integer.parseInt(request.getParameter("id"));
         sucursalBL.eliminarSucursal(id);
         response.sendRedirect("SucursalController?accion=listar");
@@ -127,6 +192,29 @@ public class SucursalController extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
+
+    // ── JSON helpers ─────────────────────────────────────────────────────
+
+    private boolean isFetchRequest(HttpServletRequest req) {
+        String header = req.getHeader("X-Requested-With");
+        return "fetch".equalsIgnoreCase(header);
+    }
+
+    private void writeJson(HttpServletResponse resp, boolean ok, String msg, List<String> errors)
+            throws IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        Map<String, Object> env = new LinkedHashMap<>();
+        env.put("ok", ok);
+        if (msg != null) {
+            env.put("msg", msg);
+        }
+        if (errors != null) {
+            env.put("errors", errors);
+        }
+        resp.getWriter().print(gson.toJson(env));
+    }
+
+    // ── Legacy hand-rolled JSON for buscar (preserved, ADR-2) ────────────
 
     private String toJson(List<Sucursal> lista) {
         StringBuilder sb = new StringBuilder();
