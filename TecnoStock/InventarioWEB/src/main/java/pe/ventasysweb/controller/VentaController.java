@@ -14,7 +14,12 @@ import pe.ventasysejb.entity.Cliente;
 import pe.ventasysejb.entity.Venta;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.google.gson.Gson;
 
 @WebServlet("/venta")
 public class VentaController extends HttpServlet {
@@ -23,6 +28,8 @@ public class VentaController extends HttpServlet {
     private IVentaBL ventaBL = new VentaBL();
 
     private IClienteBL clienteBL = new ClienteBL();
+
+    private Gson gson = new Gson();
 
     public VentaController() {
         super();
@@ -71,5 +78,26 @@ public class VentaController extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
+    }
+
+    // ── JSON helpers ─────────────────────────────────────────────────────
+
+    private boolean isFetchRequest(HttpServletRequest req) {
+        String header = req.getHeader("X-Requested-With");
+        return "fetch".equalsIgnoreCase(header);
+    }
+
+    private void writeJson(HttpServletResponse resp, boolean ok, String msg, List<String> errors)
+            throws IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        Map<String, Object> env = new LinkedHashMap<>();
+        env.put("ok", ok);
+        if (msg != null) {
+            env.put("msg", msg);
+        }
+        if (errors != null) {
+            env.put("errors", errors);
+        }
+        resp.getWriter().print(gson.toJson(env));
     }
 }
